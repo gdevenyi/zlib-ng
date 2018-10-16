@@ -7,43 +7,66 @@ matrix:
     - os: linux
       compiler: gcc
       env: MAKE="make" BUILDDIR=. TOOL="./configure --warn"
+
     - os: linux
       compiler: gcc
       env: MAKE="make" BUILDDIR=. TOOL="cmake . -DZLIB_COMPAT=OFF -DWITH_GZFILEOP=ON -DWITH_NEW_STRATEGIES=YES -DWITH_OPTIM=ON"
+
     - os: linux
       compiler: gcc
       env: MAKE="make" BUILDDIR=../build TOOL="../zlib-ng/configure --warn --zlib-compat"
+
     - os: linux
       compiler: gcc
       env: MAKE="make" BUILDDIR=. TOOL="./configure --warn --zlib-compat --without-optimizations --without-new-strategies"
+
     - os: linux
       compiler: gcc
       env: MAKE="make" BUILDDIR=. TOOL="cmake ."
+
     - os: linux
       compiler: gcc
       env: MAKE="make" BUILDDIR=../build TOOL="cmake ../zlib-ng"
 
     - os: linux
       compiler: clang
-      env: MAKE="scan-build -v --status-bugs make" BUILDDIR=. TOOL="scan-build -v --status-bugs ./configure --warn --zlib-compat"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env: MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0" MAKE="scan-build -v --status-bugs make" BUILDDIR=. TOOL="scan-build -v --status-bugs ./configure --warn --zlib-compat"
+
     - os: linux
       compiler: clang
-      env: MAKE="scan-build -v --status-bugs make" BUILDDIR=../build TOOL="scan-build -v --status-bugs cmake ../zlib-ng"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env: MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0" MAKE="scan-build -v --status-bugs make" BUILDDIR=../build TOOL="scan-build -v --status-bugs cmake ../zlib-ng"
 
     - os: osx
       compiler: gcc
       env: MAKE="make" BUILDDIR=. TOOL="./configure --warn --zlib-compat"
+
     - os: osx
       compiler: gcc
       env: MAKE="make" BUILDDIR=../build TOOL="../zlib-ng/configure --warn --zlib-compat"
+
     - os: osx
       compiler: gcc
       env: MAKE="make" BUILDDIR=. TOOL="cmake ."
 
     - os: osx
+      osx_image: xcode10
       compiler: clang
       env: MAKE="scan-build -v --status-bugs make" BUILDDIR=. TOOL="scan-build -v --status-bugs ./configure --warn --zlib-compat"
+
     - os: osx
+      osx_image: xcode10
       compiler: clang
       env: MAKE="scan-build -v --status-bugs make" BUILDDIR=../build TOOL="scan-build -v --status-bugs cmake ../zlib-ng"
 
@@ -51,16 +74,30 @@ matrix:
     - os: linux-ppc64le
       compiler: gcc
       env: MAKE="make" BUILDDIR=. TOOL="cmake ."
+
     - os: linux-ppc64le
       compiler: gcc
       env: MAKE="make" BUILDDIR=../build TOOL="cmake ../zlib-ng"
 
     - os: linux-ppc64le
       compiler: clang
-      env: MAKE="scan-build -v --status-bugs make" BUILDDIR=. TOOL="scan-build -v --status-bugs ./configure --warn --zlib-compat"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0      
+      env: MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0" MAKE="scan-build -v --status-bugs make" BUILDDIR=. TOOL="scan-build -v --status-bugs ./configure --warn --zlib-compat"
+
     - os: linux-ppc64le
       compiler: clang
-      env: MAKE="scan-build -v --status-bugs make" BUILDDIR=../build TOOL="scan-build -v --status-bugs cmake ../zlib-ng"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
+      env: MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0" MAKE="scan-build -v --status-bugs make" BUILDDIR=../build TOOL="scan-build -v --status-bugs cmake ../zlib-ng"
 
     # Cross compiling for arm variants
     - os: linux
@@ -74,6 +111,7 @@ matrix:
       # For all aarch64 implementations NEON is mandatory, while crypto/crc are not.
       # So for aarch64 NEON should be automatically enabled, and "acle" should be explicitly defined
       env: CHOST=aarch64-linux-gnu MAKE="make" BUILDDIR=. TOOL="./configure --warn --zlib-compat"
+
     - os: linux
       compiler: aarch64-linux-gnu-gcc
       addons:
@@ -89,6 +127,7 @@ matrix:
       # should work if manually test it in a dist with gcc-aarch64 5.1 or higher
       # env: CHOST=aarch64-linux-gnu MAKE="make" BUILDDIR=. TOOL="./configure --warn --zlib-compat --acle"
       env: CHOST=aarch64-linux-gnu MAKE="make" BUILDDIR=. TOOL="./configure --warn --zlib-compat"
+
     # Hard-float subsets
     - os: linux
       compiler: arm-linux-gnueabihf-gcc
@@ -99,6 +138,7 @@ matrix:
             - gcc-arm-linux-gnueabihf
             - libc-dev-armhf-cross
       env: CHOST=arm-linux-gnueabihf MAKE="make" BUILDDIR=. TOOL="./configure --warn"
+
     - os: linux
       compiler: arm-linux-gnueabihf-gcc
       addons:
@@ -108,6 +148,7 @@ matrix:
             - gcc-arm-linux-gnueabihf
             - libc-dev-armhf-cross
       env: CHOST=arm-linux-gnueabihf MAKE="make" BUILDDIR=. TOOL="./configure --warn --zlib-compat --neon"
+
     - os: linux
       compiler: arm-linux-gnueabihf-gcc
       addons:
@@ -117,6 +158,7 @@ matrix:
             - gcc-arm-linux-gnueabihf
             - libc-dev-armhf-cross
       env: CHOST=arm-linux-gnueabihf MAKE="make" BUILDDIR=. TOOL="./configure --warn --zlib-compat"
+
     # Soft-float subset
     - os: linux
       compiler: arm-linux-gnueabi-gcc
@@ -127,6 +169,7 @@ matrix:
             - gcc-arm-linux-gnueabi
             - libc-dev-armel-cross
       env: CHOST=arm-linux-gnueabi MAKE="make" BUILDDIR=. TOOL="./configure"
+
     - os: linux
       compiler: arm-linux-gnueabi-gcc
       addons:
@@ -136,5 +179,8 @@ matrix:
             - gcc-arm-linux-gnueabi
             - libc-dev-armel-cross
       env: CHOST=arm-linux-gnueabi MAKE="make" BUILDDIR=. TOOL="./configure --zlib-compat"
+
+before_install:
+    - eval "${MATRIX_EVAL}"
 
 script: mkdir -p $BUILDDIR && cd $BUILDDIR && $TOOL && $MAKE -j2 && make test
